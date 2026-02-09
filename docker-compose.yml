@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  attacker:
+    build: .
+    tty: true
+    stdin_open: true
+    networks:
+      - pentest-net
+    volumes:
+      - ./attacker-scripts:/root/scripts
+  dvwa:
+    image: vulnerables/web-dvwa
+    networks:
+      - pentest-net
+    environment:
+      - MYSQL_PASS=dvwa
+    restart: always
+  metasploitable:
+    image: tleemcjr/metasploitable2
+    networks:
+      - pentest-net
+    restart: always
+    tty: true
+    command: [ "sh", "-c", "service --status-all >/dev/null 2>&1 || true; tail -f /dev/null" ]
+networks:
+  pentest-net:
+    driver: bridge
