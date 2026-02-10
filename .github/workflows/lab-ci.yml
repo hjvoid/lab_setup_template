@@ -1,0 +1,41 @@
+name: Lab CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  compose-build-and-smoke-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show versions
+        run: |
+          docker --version
+          docker compose version
+
+      - name: Validate compose file
+        run: docker compose config
+
+      - name: Build + start lab
+        run: docker compose up -d --build
+
+      - name: Smoke tests
+        run: |
+          docker compose exec -T attacker sh -lc 'getent hosts dvwa'
+          docker compose exec -T attacker sh -lc 'curl -sS -I http://dvwa | head -n 1'
+          docker compose exec -T attacker sh -lc 'python -c "import scapy.all, impacket, pwn, boofuzz, mitmproxy; print(\"python-ok\")"'
+
+      - name: Show running containers
+        run: docker compose ps
+
+      - name: Teardown
+        if: always()
+        run: docker compose down -v
