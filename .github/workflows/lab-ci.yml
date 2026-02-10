@@ -42,7 +42,7 @@ jobs:
           done
 
           docker compose exec -T attacker sh -lc 'curl -sS -I http://dvwa | head -n 1'
-          docker compose exec -T attacker sh -lc 'python3 -c "import scapy.all, impacket, pwn, boofuzz, mitmproxy; print(\"python-ok\")"'
+          docker compose exec -T attacker sh -lc '/opt/lab-venv/bin/python -c "import scapy.all, impacket, pwn, boofuzz, mitmproxy; print(\"python-ok\")"'
 
       - name: Show running containers
         run: docker compose ps
