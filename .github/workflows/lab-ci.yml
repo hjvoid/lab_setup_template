@@ -30,8 +30,19 @@ jobs:
       - name: Smoke tests
         run: |
           docker compose exec -T attacker sh -lc 'getent hosts dvwa'
+
+          # Wait for DVWA to respond over HTTP (up to ~60 seconds)
+          for i in $(seq 1 30); do
+            if docker compose exec -T attacker sh -lc 'curl -fsS -I http://dvwa >/dev/null'; then
+              echo "DVWA is up"
+              break
+            fi
+            echo "Waiting for DVWA... ($i/30)"
+            sleep 2
+          done
+
           docker compose exec -T attacker sh -lc 'curl -sS -I http://dvwa | head -n 1'
-          docker compose exec -T attacker sh -lc 'python -c "import scapy.all, impacket, pwn, boofuzz, mitmproxy; print(\"python-ok\")"'
+          docker compose exec -T attacker sh -lc 'python3 -c "import scapy.all, impacket, pwn, boofuzz, mitmproxy; print(\"python-ok\")"'
 
       - name: Show running containers
         run: docker compose ps

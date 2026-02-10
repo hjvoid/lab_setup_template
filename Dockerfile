@@ -31,7 +31,7 @@ WORKDIR /root
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip \
  && pip install --no-cache-dir -r /tmp/requirements.txt \
- && python -c "import scapy.all, impacket, pwn, boofuzz, mitmproxy" \
+ && python3 -c "import scapy.all, impacket, pwn, boofuzz, mitmproxy" \
  && rm -f /tmp/requirements.txt
 
 
