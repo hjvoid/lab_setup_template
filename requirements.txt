@@ -1,0 +1,5 @@
+scapy==2.7.0
+impacket==0.13.0
+boofuzz==0.4.2
+pwntools==4.15.0
+mitmproxy==11.0.2

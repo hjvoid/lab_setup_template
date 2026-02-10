@@ -21,6 +21,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
+# Create a persistent venv inside the image
+ENV VENV_PATH=/opt/lab-venv
+RUN python3 -m venv ${VENV_PATH}
+ENV PATH="${VENV_PATH}/bin:${PATH}"
+
+# Install python deps into the venv
+WORKDIR /root
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --upgrade pip \
+ && pip install --no-cache-dir -r /tmp/requirements.txt \
+ && python -c "import scapy.all, impacket, pwn, boofuzz, mitmproxy" \
+ && rm -f /tmp/requirements.txt
+
 
 WORKDIR /root
 CMD ["bash"]
